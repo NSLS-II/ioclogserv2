@@ -28,3 +28,10 @@ Also provided is [ioglogserver_bnl.conf](ioclogserver_bnl.conf) which demonstrat
 filtering caputlog entries by user name.
 
 Type "sudo ./install.sh" to install it.
+
+This daemon is being used at NSLS-2 for logging caput messages sent by caPutLog:
+https://github.com/epics-modules/caPutLog
+This daemon can be used for logging all kinds of messages as long as the message
+is line-based.
+
+This repository is based on: https://github.com/mdavidsaver/ioclogserv2
