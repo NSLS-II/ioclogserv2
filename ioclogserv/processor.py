@@ -4,12 +4,15 @@ import logging
 _log = logging.getLogger(__name__)
 
 import re
+import socket
 
 from . import handler
 
 from twisted.internet import defer, threads
 
 # DD-Mon-YY HH:MM:SS host user PV new=A old=B [min=C max=D]
+# 07/22/2022: how to handle this? b'01-Jul-22 12:37:06 hlaioc01.cs.01-Jul-22 12:37:06 hlaioc01.cs.nsls2.local softioc SR-BI{}TBTPlotX19-I ...'
+
 _capl = r'(?P<time>\d+-\S+-\d+ \d+:\d+:\d+) (?P<host>\S+) (?P<user>\S+) (?P<pv>\S+)' + \
         r'.*'
 #        r' new=(?P<new>\S*) old=(?P<old>\S*) (?:min=(?P<min>\S*) max=(?P<max>\S*))?'
@@ -30,12 +33,21 @@ class PutLogTagger(handler.Processor):
             except:
                 M = _capl.match(ent.msg.decode('utf-8'))
             if M:
-                ent.user = M.group('user')
-                ent.host = M.group('host')
-                ent.pv = M.group('pv')
+                if len(ent.msg.split()) == 7 or len(ent.msg.split()) == 9:
+                    ent.user = M.group('user')
+                    ent.host = M.group('host')
+                    ent.pv = M.group('pv')
+                    try:
+                        socket.gethostbyname(ent.host)
+                    except: 
+                        ent.user = None
+                else:
+                    ent.user = ent.host = ent.pv = None
             else:
                 ent.user = ent.host = ent.pv = None
+
         return entries
+
 
 handler.registerProcessor('tagcaputlog', PutLogTagger)
 
