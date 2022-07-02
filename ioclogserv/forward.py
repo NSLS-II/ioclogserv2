@@ -27,7 +27,8 @@ class PublisherFactory(protocol.ServerFactory):
         P.publisher = self.publisher
         return P
 
-# 10.0.152.88:51393 Sun Dec 21 10:58:21 2014 21-Dec-14 10:58:14 cdesk05 wguo RF{Osc:1}Freq:SP.VAL new=0.499682 old=0.499682 min=0.499682 max=0.499682
+# 10.0.152.88:51393 Sun Dec 21 10:58:21 2014 21-Dec-14 10:58:14 cdesk05 wguo 
+# RF{Osc:1}Freq:SP.VAL new=0.499682 old=0.499682 min=0.499682 max=0.499682
 
 class NetPublisher(handler.Processor):
     _fmt = '%(source)s %(asctime)s %(message)s'
@@ -71,14 +72,14 @@ class NetPublisher(handler.Processor):
         self.clients.remove(P)
 
     def process(self, entries):
-        entries = ''.join([self.fmt.format(E)+'\n' for E in entries])
+        entries = ''.join([self.fmt.format(E)+'\n' for E in entries]).encode('utf-8')
         for P in self.clients:
             if P.paused:
                 P.nlost += len(entries)
                 continue
 
             elif P.nlost>0:
-                P.transport.write('Lost %d entries at %s\n'%(P.nlost,self.name))
+                P.transport.write(b'Lost %d entries at %s\n'%(P.nlost,self.name))
                 P.nlost=0
 
             try:

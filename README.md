@@ -14,6 +14,7 @@ Dependencies
 ------------
 
 Requires: python-twisted-core >= 10.0
+
 Tested on: py2.7/Twisted-20.3.0 (pip2 install twisted), py3.6/Twisted-19.10.0
 
 Configuration

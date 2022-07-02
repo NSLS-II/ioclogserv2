@@ -69,7 +69,8 @@ class IOCLogProtocol(basic.LineOnlyReceiver):
         _log.debug('Flush %d messages from %s:%d at %s', len(B),
                    self.peer.host, self.peer.port, self.factory.name)
         if nlost>0:
-            B.append((self.reactor.seconds(), 'Lost %d messages at %s'%(nlost,self.factory.name)))
+            B.append((self.reactor.seconds(), 'Lost %d messages from %s at %s'\
+                      %(nlost,self.peer.host, self.factory.name)))
 
         T0 = self.reactor.seconds()
         yield defer.maybeDeferred(self.collector, B, self.peer)
