@@ -2,6 +2,7 @@
 
 import logging
 _log = logging.getLogger(__name__)
+import sys
 
 import weakref
 try:
@@ -37,6 +38,9 @@ class IOCLogProtocol(basic.LineOnlyReceiver):
         self.lineReceived('Line length exceeded')
 
     def lineReceived(self, line):
+        if sys.version_info[:2] > (2,7):
+            line = line.decode('utf-8') # convert the byte-string to unicode 
+
         if len(self._B)>=self.factory.buflim:
             # must receive as fast as possible to avoid blocking
             # the sender as this will cause ioclog
